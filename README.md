@@ -31,12 +31,6 @@ The app includes multiple-choice questions, a progress bar, a timer, and a resul
 
 ---
 
-## 🚀 Live Demo
-[🔗 Click here to view live demo](https://react-quiz-gamma-sable.vercel.app/)  
-*(Replace with your deployed link)*
-
----
-
 ## 🛠️ Tech Stack
 
 - **Frontend:** React, Tailwind CSS
