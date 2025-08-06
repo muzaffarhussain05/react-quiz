@@ -19,7 +19,7 @@ const Timer = ({ initialTime, onTimeUp }) => {
     return `0${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  return <div className="border border-gray-500 w-24 py-3 px-3 rounded-full text-center text-lg ">{timeFormat(time)}</div>;
+  return <div className="border border-gray-500 w-28 py-3 px-4 rounded-full text-center text-xl ">{timeFormat(time)}</div>;
 };
 
 export default Timer;
