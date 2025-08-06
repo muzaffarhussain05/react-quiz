@@ -1,38 +1,77 @@
-import { Component, createContext, useContext, useState } from 'react';
+import {  createContext, useContext } from "react";
+import {  useReducer } from "react";
+import { data } from "../data/data";
 
-// 1. Create the context
+
 const AppContext = createContext(undefined);
-
-// 2. Create the provider
-export const AppProvider = ({ children }) => {
-  // Example state variables
-  const [theme, setTheme] = useState('light'); // light or dark
-  const [user, setUser] = useState(null); // current logged-in user
-
-  // Example function
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
-
-  const login = (name) => {
-    setUser({ name });
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
-
-  const value = {
-    theme,
-    toggleTheme,
-    user,
-    login,
-    logout,
-  };
-
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+const initialState = {
+  currentQuestion: 0,
+  selectedAnswer: null,
+  score: 0,
+  showResult: false,
+  isAnswered: false,
 };
 
+function quizReducer(state, action) {
+  switch (action.type) {
+    case "SELECT": {
+      if (state.isAnswered) return state;
+
+      const { questionIndex, answerIndex } = action.payload;
+      const q = data[questionIndex];
+      const correctIndex = q?.correctAnswer ?? q?.correctOption;
+      const points = q?.points ?? 10;
+      const earned = answerIndex === correctIndex ? points : 0;
+
+      return {
+        ...state,
+        selectedAnswer: answerIndex,
+        isAnswered: true,
+        score: state.score + earned,
+      };
+    }
+
+    case "NEXT": {
+      const nextIndex = state.currentQuestion + 1;
+      if (nextIndex >= data.length) {
+        return {
+          ...state,
+          showResult: true,
+        };
+      }
+      return {
+        ...state,
+        currentQuestion: nextIndex,
+        selectedAnswer: null,
+        isAnswered: false,
+      };
+    }
+
+    case "TIME_UP":
+      return { ...state, showResult: true };
+
+    case "RESET":
+      return { ...initialState };
+
+    default:
+      return state;
+  }
+}
+
+export const AppProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(quizReducer, initialState);
+
+  const totalQuestions = data.length;
+  const maxScore = data.reduce((s, q) => s + (q.points ?? 10), 0);
+
+  return (
+    <AppContext.Provider
+      value={{ state, dispatch, data, totalQuestions, maxScore }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+};
 
 export const useApp = () => {
   const context = useContext(AppContext);
@@ -40,9 +79,3 @@ export const useApp = () => {
   return context;
 };
 
-
-// use the context in other Components
-// import { useApp } from './AppContext';
-
-// const App = () => {
-//   const { theme, toggleTheme, user, login, logout } = useApp();

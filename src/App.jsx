@@ -11,12 +11,14 @@ import { Layout } from "./pages/Layout";
 import ResultScreen from "./pages/ResultScreen";
 import QuizScreen from "./pages/QuizScreen";
 
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route index element={<StartScreen />} />
       <Route path="quiz" element={<QuizScreen />} />
       <Route path="result" element={<ResultScreen />} />
+     
     </Route>
   )
 );
